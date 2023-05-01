@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studentenkueche</title>
+    <link rel="stylesheet" href="/CSS/favorites.css">
+    <link rel="stylesheet" href="/CSS/recipe_card.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+                <li><a id="recipes">Rezepte</a></li>
+                <li class="active"><a id="favorites">Favoriten</a></li>
+                <li><a id="myrecipes">Meine Rezepte</a></li>
+                <li><a id="newrecipe">Neues Rezept</a></li>
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li><a id="profile">Mein Profil</a></li>
+            <li><a id="logout">Ausloggen</a></li>
+        </ul>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h1>Favorisierte Rezepte</h1>
+            <div>
+                <a id="sortPrice"><input type="button" name="cheapButton" id="cheapButton" value="Günstig"></a>
+                <a id="sortDuration"><input type="button" name="fastButton" id="fastButton" value="schnell"></a>
+                <a id="sortRating"><input type="button" name="mostLikedButton" id="mostLikedButton" value="Beliebt"></a>
+                <select name="categoryButton" id="categoryButton" onchange="categoryFnc(this.selectedIndex)">
+                    <option>Alle</option>
+                    <option>Kuchen</option>
+                    <option>Nudeln</option>
+                    <option>Reis</option>
+                    <option>Fleisch</option>
+                    <option>Vegetarisch</option>
+                </select>
+            </div>
+            <p id="sort" th:text="${currentSort}" hidden>noSort</p>
+            <div class="recipes" id="rec" th:each="recipe : ${recipes}">
+                <a  th:href="@{/detailrecipe/{id}(id=${recipe.id})}">
+                    <div class="recipe" id="recipe">
+                        <img class="images" th:src="@{'data:image/jpeg;base64,'+${recipe.images}}">
+                        <div class="recipe_text">
+                            <h1 th:text="${recipe.name}"></h1>
+                            <p th:text="${recipe.description}"></p>
+                            <div class="recipe_info_container">
+                                <div class="recipe_info">
+                                    <h3>Preis</h3>
+                                    <p th:text="${recipe.price}"></p>
+                                </div>
+                                <div class="recipe_info">
+                                    <h3>Zubereitungszeit</h3>
+                                    <p th:text="${recipe.duration} + ' min'"></p>
+                                </div>
+                                <div class="recipe_info">
+                                    <h3>Schwierigkeit</h3>
+                                    <p th:text="${recipe.difficulty}"></p>
+                                </div>
+                                <div class="recipe_info">
+                                    <h3>Bewertung</h3>
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        "use strict";
+        var username = 1
+        var sortBy = document.getElementById("sort").textContent
+        var category = `noCategory`
+        document.getElementById("recipes").setAttribute("href", "/recipes/noSort/noCategory")
+        document.getElementById("favorites").setAttribute("href", "/favorites/"+username+"/noSort/noCategory")
+        document.getElementById("myrecipes").setAttribute("href", "/myrecipes/"+username+"/noSort")
+        document.getElementById("newrecipe").setAttribute("href", "/newrecipe")
+        document.getElementById("profile").setAttribute("href", "/profile/"+username)
+        document.getElementById("logout").setAttribute("href", "/logout")
+
+        document.getElementById("sortPrice").setAttribute("href", '/favorites/'+username+'/Price/'+category)
+        document.getElementById("sortDuration").setAttribute("href", '/favorites/'+username+'/duration/'+category)
+        document.getElementById("sortRating").setAttribute("href", '/favorites/'+username+'/rating/'+category)
+
+
+        function categoryFnc(selectedValue){
+            switch(selectedValue){
+                case 0:
+                    category = "noCategory"
+                    location.href = '/favorites/'+username+"/"+sortBy+"/"+category
+                    break
+                case 1:
+                    category = "cake"
+                    location.href = '/favorites/'+username+"/"+sortBy+"/"+category
+                    break
+                case 2:
+                    category = "noodles"
+                    location.href = '/favorites/'+username+"/"+sortBy+"/"+category
+                    break
+                case 3:
+                    category = "rice"
+                    location.href = '/favorites/'+username+"/"+sortBy+"/"+category
+                    break
+                case 4:
+                    category = "meat"
+                    location.href = '/favorites/'+username+"/"+sortBy+"/"+category
+                    break
+                case 5:
+                    category = "vegetarian"
+                    location.href = '/favorites/'+username+"/"+sortBy+"/"+category
+                    break
+            }
+        }
+
+    </script>
+</body>
+</html>

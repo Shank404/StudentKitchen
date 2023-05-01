@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neues Rezept</title>
+    <link rel="stylesheet" href="/CSS/detailrecipe.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+                <li class="active"><a id="recipes">Rezepte</a></li>
+                <li><a id="favorites">Favoriten</a></li>
+                <li><a id="myrecipes">Meine Rezepte</a></li>
+                <li><a id="newrecipe">Neues Rezept</a></li>
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li><a id="profile">Mein Profil</a></li>
+            <li><a id="logout">Ausloggen</a></li>
+        </ul>
+    </header>
+
+    <h1>Rezept Detailansicht</h1>
+    <div class="container">
+        <div class="image">
+            <img id="images" th:src="@{'data:image/jpeg;base64,'+${recipe.images}}">
+            <label th:text="'Views: ' + ${recipe.views}"></label>
+            <label th:text="'Rating: ' + ${recipe.rating}"></label>
+            
+            <div class="rating-buttons">
+                    <button type="submit" onclick="rateRecipe(1)">1</button>
+                    <button type="submit" onclick="rateRecipe(2)">2</button>
+                    <button type="submit" onclick="rateRecipe(3)">3</button>
+                    <button type="submit" onclick="rateRecipe(4)">4</button>
+                    <button type="submit" onclick="rateRecipe(5)">5</button>
+            </div>
+        </div>
+            <div class="item-text">
+                <h1 id="recipeId" th:text="${recipe.id}" hidden></h1>
+                <h2 th:text="'Name: ' + ${recipe.name}"></h2>
+                <label th:text="'Kurzbeschreibung: ' + ${recipe.description}"></label>
+
+
+                <label>Zutaten</label>
+                <table name="ingredients" id="ingredients">
+                    <thead>
+                        <tr>
+                            <th>Zutaten</td>                                
+                            <th>Menge</td>
+                         </tr>
+                    </thead>
+                    <tbody id="tableBody" th:each="ing : ${ingredients}">
+                        <tr>
+                            <td th:text="${ing.name}"></td>
+                            <td th:text="${ing.amount}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label th:text="'Zubereitung: ' + ${recipe.preparation}"></label>
+                    <a href="http://localhost:8080/recipes">
+                        <button name="backButton" id="backButton">Zurück</button>
+                    </a>
+                </div>
+                <div class="item-facts">
+                    <button onclick="addFavouriteRecipe()">Favorit</button>
+                    <label th:text="'Preis: ' + ${recipe.price}"></label>
+                    <label th:text="'Dauer: ' + ${recipe.duration}"></label>
+                    <label th:text="'Schwierigkeit: ' + ${recipe.difficulty}"></label>
+                    <label th:text="'Kategory: ' + ${recipe.category}"></label>
+                    <label th:text="'Autor: ' + ${recipe.author}"></label>
+                </div>
+        </div>
+    </div>
+
+    <script>
+        var recipeId = document.getElementById("recipeId").textContent
+        var recipeAuthor = "h"
+        var username = 1
+        document.getElementById("recipes").setAttribute("href", "/recipes/noSort/noCategory")
+        document.getElementById("favorites").setAttribute("href", "/favorites/"+username+"/noSort/noCategory")
+        document.getElementById("myrecipes").setAttribute("href", "/myrecipes/"+username+"/noSort")
+        document.getElementById("newrecipe").setAttribute("href", "/newrecipe")
+        document.getElementById("profile").setAttribute("href", "/profile/"+username)
+        document.getElementById("logout").setAttribute("href", "/logout")
+
+        updateViews()
+
+        function updateViews(){
+                fetch('/api/updaterecipeviews/'+recipeId, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json; Charset-UTF8" }
+                })
+        }
+
+        function rateRecipe(vote){
+            if(sessionStorage.getItem("username") != recipeAuthor){
+                fetch('/api/updatereciperating/'+recipeId+"/"+username+"/"+vote, {
+                    method: "POST",
+                        headers: { "Content-Type": "application/json; Charset-UTF8" }
+                })
+            }
+        }
+        function addFavouriteRecipe(){
+            fetch('/api/addfavouriterecipe/'+username+"/"+recipeId, {
+                method: "POST",
+                headers: { "Content-Type": "application/json; Charset-UTF8" }
+            })
+        }
+    </script>
+</body>
+
+</html>

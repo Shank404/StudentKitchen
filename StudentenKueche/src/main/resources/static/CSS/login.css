@@ -1,0 +1,47 @@
+.form_container {
+    display: flex;
+    justify-content: center;
+}
+
+.form {
+    margin-top: 100px;
+    border-radius: 10px;
+    background-color: rgb(188, 194, 194);
+    width: 384px;
+    height: 350px;
+    padding: 50px;
+    box-shadow: 0 1vh 2vw rgba(0, 0, 0, 0.5);
+}
+
+.form input {
+    border-radius: 5px;
+    width: 100%;
+    border: none;
+    margin: 0 0 20px 0;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.form label {
+    font-size: 1.25rem;
+}
+
+.form a {
+    padding-top: 20px;
+    display: flex;
+    justify-content: end;
+    color: rgb(255, 0, 64);
+}
+
+.error {
+    color: red;
+}
+
+#submit:hover {
+    cursor: pointer;
+    background-color: rgb(134, 134, 131);
+}
+
+
+

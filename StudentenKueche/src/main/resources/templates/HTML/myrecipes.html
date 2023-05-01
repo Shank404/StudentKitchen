@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Rezepte</title>
+    <link rel="stylesheet" href="/CSS/myrecipes.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <link rel="stylesheet" href="/CSS/recipe_card.css">
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+                <li><a id="recipes">Rezepte</a></li>
+                <li><a id="favorites">Favoriten</a></li>
+                <li class="active"><a id="myrecipes">Meine Rezepte</a></li>
+                <li><a id="newrecipe">Neues Rezept</a></li>
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li><a id="profile">Mein Profil</a></li>
+            <li><a id="logout">Ausloggen</a></li>
+        </ul>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h1>Meine Rezepte</h1>
+            <div>
+                <a href="/myrecipes/1/rating"><input type="button" name="ratingButton" id="ratingButton" value="Bewertung"></a>
+                <a href="/myrecipes/1/views"><input type="button" name="mostViewsButton" id="mostViewsButton" value="Am meisten Angesehen"></a>
+            </div>
+            <div class="recipe_container" id="recipe_container" th:each="recipe : ${myRecipes}">
+                <div class="recipe" id="recipeEditable">
+                        <img class="images" th:src="@{'data:image/jpeg;base64,'+${recipe.images}}">
+                        <div class="recipe_text">
+                            <h1 th:text="${recipe.name}"></h1>
+                            <p th:text="${recipe.description}"></p>
+                            <div class="recipe_info_container">
+                                <div class="recipe_info">
+                                    <h3>Preis</h3>
+                                    <p th:text="${recipe.price}"></p>
+                                </div>
+                                <div class="recipe_info">
+                                    <h3>Zubereitungszeit</h3>
+                                    <p th:text="${recipe.duration} + ' min'"></p>
+                                </div>
+                                <div class="recipe_info">
+                                    <h3>Schwierigkeit</h3>
+                                    <p th:text="${recipe.difficulty}"></p>
+                                </div>
+                                <div class="recipe_info">
+                                    <h3>Bewertung</h3>
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="recipe_buttons">
+                        <p th:text="'Aufrufe ' + ${recipe.views}"></p>
+                        <button name="deleteButton" id="deleteButton" th:data-name="${recipe.id}" th:onclick="deleteRecipe(this.getAttribute('data-name'))">löschen</button>
+                        <button name="editButton" id="editButton" th:data-name="${recipe.id}" th:onclick="editRecipe(this.getAttribute('data-name'))">bearbeiten</button>
+                    </div>
+            </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        "use strict";
+
+        var username = 1
+        document.getElementById("recipes").setAttribute("href", "/recipes/noSort/noCategory")
+        document.getElementById("favorites").setAttribute("href", "/favorites/"+username+"/noSort/noCategory")
+        document.getElementById("myrecipes").setAttribute("href", "/myrecipes/"+username+"/noSort")
+        document.getElementById("newrecipe").setAttribute("href", "/newrecipe")
+        document.getElementById("profile").setAttribute("href", "/profile/"+username)
+        document.getElementById("logout").setAttribute("href", "/logout")
+
+        function deleteRecipe(id){
+            fetch('/api/recipes/'+id, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json"}
+            })
+
+            //TODO Was ist hiermit ?
+            let modifier = -1
+            fetch("/api/usersrecipesamount/"+username+"/"+modifier, {
+                method: "POST",
+            }).then(resonse => window.location.href = "/myrecipes/"+username+"/noSort")
+
+            return false;
+        }
+
+        function editRecipe(id){
+            sessionStorage.setItem("selectedRecipe", id)
+            window.location.href = "/editrecipe/"+id
+        }
+
+    </script>
+</body>
+
+</html>

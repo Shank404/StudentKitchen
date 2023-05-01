@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studentenkueche</title>
+    <link rel="stylesheet" href="/CSS/profile.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <script type="text/javascript" th:src="@{general.js}"></script>
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+                <li class="active"><a id="recipes">Rezepte</a></li>
+                <li><a id="favorites">Favoriten</a></li>
+                <li><a id="myrecipes">Meine Rezepte</a></li>
+                <li><a id="newrecipe">Neues Rezept</a></li>
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li class="active"><a id="profile">Mein Profil</a></li>
+            <li><a id="logout">Ausloggen</a></li>
+        </ul>
+    </header>
+
+    <div class="container">
+        <div class="profile_image">
+            <img id="userImage" th:src="@{'data:image/jpeg;base64,'+${user.image}}">
+        </div>
+        <div class="form_container">
+            <div class="profile">
+                <div class="information">
+                    <label id="left">Name: </label>
+                    <label th:text="${user.username}"></label>
+                </div>
+                <div class="information">
+                    <label id="left">Benutzername: </label>
+                    <label th:text="${user.name}"></label>
+                </div>
+                <div class="information">
+                    <label id="left">Email: </label>
+                    <label th:text="${user.email}"></label>
+                </div>
+                <div class="information">
+                    <label id="left">Rezepte: </label>
+                    <label th:text="${user.amountRecipes}"></label>
+                </div>
+                <a href="http://localhost:8080/editprofile/1">
+                    <input type="button" id="editBtn" value="Profil bearbeiten">
+                </a>
+            </div>
+            </div>
+    </div>
+<script>
+    var username = 1
+    document.getElementById("recipes").setAttribute("href", "/recipes/noSort/noCategory")
+    document.getElementById("favorites").setAttribute("href", "/favorites/"+username+"/noSort/noCategory")
+    document.getElementById("myrecipes").setAttribute("href", "/myrecipes/"+username+"/noSort")
+    document.getElementById("newrecipe").setAttribute("href", "/newrecipe")
+    document.getElementById("profile").setAttribute("href", "/profile/"+username)
+    document.getElementById("logout").setAttribute("href", "/logout")
+</script>
+</body>
+
+</html>

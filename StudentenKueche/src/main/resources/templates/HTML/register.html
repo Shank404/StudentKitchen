@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/CSS/login.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li><a href="/login">Login</a></li>
+            <li class="active"><a href="/register">Register</a></li>
+        </ul>
+    </header>
+
+    <div class="form_container">
+        <div class="form">
+          <form class="register-form" onsubmit="send(event, this)">
+            <label for="username">Benutzername:</label>
+            <input type="text" name="username" id="username" placeholder="Benutzername" required>
+            <label for="password">Passwort:</label>
+            <input type="password" name="password" id="password" placeholder="Passwort" required>
+            <input type="submit" name="submit" id="submit" value="Registrieren">
+            <div class="error">
+                <p id="error">-</p>
+            </div> 
+            <a href="/login">Login now!</a>
+        </form>
+        </div>
+    </div>
+
+    <script>
+        function send(e, form) {
+            e.preventDefault();
+            fetch("/api/register", {
+                method: "POST",
+                body: new FormData(form),
+            }).then(response => response.json()).then(response => redirect(response));
+        }
+
+        function redirect(response){
+            if(response.username != "ERROR"){
+                document.getElementById("error").textContent = "Account erfolgreich erstellt."
+            } else {
+                document.getElementById("error").textContent = "Benutzername existiert bereits."
+            }
+            document.getElementById("username").value = ""
+            document.getElementById("password").value = ""
+        }
+    </script>
+
+</body>
+
+</html>

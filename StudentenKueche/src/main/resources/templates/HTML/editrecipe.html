@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neues Rezept</title>
+    <link rel="stylesheet" href="/CSS/newrecipe.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <script type="text/javascript" th:src="@{general.js}"></script>
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+                <li><a id="recipes">Rezepte</a></li>
+                <li><a id="favorites">Favoriten</a></li>
+                <li class="active"><a id="myrecipes">Meine Rezepte</a></li>
+                <li><a id="newrecipe">Neues Rezept</a></li>
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li><a id="profile">Mein Profil</a></li>
+            <li><a id="logout">Ausloggen</a></li>
+        </ul>
+    </header>
+
+    <div class="container">
+        <div class="recipe_image">
+            <img id="imageToUpload" th:src="@{'data:image/jpeg;base64,'+${recipe.images}}">
+        </div>
+        <div class="form_container">
+            <div class="form">
+            <form class="recipe-form" onsubmit="send(event, this)">
+                <h1>Bearbeite dein Rezept</h1>
+                <h1 id="recipeId" th:text="${recipe.id}" hidden></h1>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" th:value="${recipe.name}" placeholder="Name des Gerichts">
+
+                <label for="description">Kurzbeschreibung</label>
+                <input type="text" name="description" id="description" th:value="${recipe.description}" placeholder="Kurze Beschreibung des Gerichts">
+
+                <label for="price">Preis (€)</label>
+                <input type="number" name="price" id="price" min="0" th:value="${recipe.price}" placeholder="0">
+
+
+                <label for="duration">Dauer (min)</label>
+                <input type="number" name="duration" id="duration" min="0" th:value="${recipe.duration}" placeholder="0">
+
+                <label for="difficulty">Schwierigkeit</label>
+                <select name="difficulty" id="difficulty" th:value="${recipe.difficulty}">
+                    <option>Leicht</option>
+                    <option>Mittel</option>
+                    <option>Schwer</option>
+                </select>
+
+                <div>
+                    <label>Kategorie</label>
+                    <div class="category">
+                        <input type="radio" name="category" id="cake" value="cake">
+                        <label for="cake">Kuchen</label>
+                        <input type="radio" name="category" id="noodles" value="noodles">
+                        <label for="noodles">Nudeln</label>
+                        <input type="radio" name="category" id="rice" value="rice">
+                        <label for="rice">Reis</label>
+                        <input type="radio" name="category" id="meat" value="meat">
+                        <label for="meat">Fleisch</label>
+                        <input type="radio" name="category" id="vegetarian" value="vegetarian">
+                        <label for="vegetarian">Vegetarisch</label>
+                    </div>
+                </div>
+
+                    <table name="ingredients" id="ingredients">
+                        <thead>
+                            <tr class="theader">
+                                <th>Zutaten</td>
+                                <th>Menge</td>
+                            </tr>
+                        </thead>
+                        <tbody class="tableContent" id="tableContent">
+                        </tbody>
+                    </table>
+                    <div class="addIngredientsBtn">
+                        <button type="button" onclick="addColumn()">+</button>
+                    </div>
+                    
+                    <div>
+                        <label>Bild</label>
+                        <input type="file" name="images" onchange="showImage(event)" id="imageForm"  accept="image/png, image/jpeg">
+                    </div>
+                    
+                    <div class="preparation">
+                        <label for="preparation">Zubereitung</label>
+                        <textarea name="preparation" id="preparation" th:text="${recipe.preparation}"
+                            placeholder="Detaillierte Beschreibung der Zubereitung..."></textarea>
+                    </div>
+                    
+                    <label for="author" hidden>Autor :</label>
+                    <p type="text" name="author" id="author" th:text="${recipe.author}" hidden></p>
+
+                    <input type="number" name="ingAmount" id="ingAmount" hidden>
+
+                    <input type="submit" id="submit" value="Speichern">
+                    <a href="http://localhost:8080/recipes">
+                        <input type="button" value="Abbrechen" name="abortButton" id="abort">
+                    </a>
+            </form>
+            </div>
+            </div>
+    </div>
+    
+
+    <script>
+        var username = 1
+        var i = 0
+        var recipeId = document.getElementById("recipeId").textContent
+        document.getElementById("recipes").setAttribute("href", "/recipes/noSort/noCategory")
+        document.getElementById("favorites").setAttribute("href", "/favorites/"+username+"/noSort/noCategory")
+        document.getElementById("myrecipes").setAttribute("href", "/myrecipes/"+username+"/noSort")
+        document.getElementById("newrecipe").setAttribute("href", "/newrecipe")
+        document.getElementById("profile").setAttribute("href", "/profile/"+username)
+        document.getElementById("logout").setAttribute("href", "/logout")
+
+        fetchRecipe()
+
+        function fetchRecipe(){
+            fetch("/api/recipes/"+recipeId, {
+                method: "GET",
+                headers: { "Content-Type": "application/json; Charset-UTF8" }
+            })
+                .then(response => response.json())
+                .then(response => fillInputs(response));
+        }
+
+        function fillInputs(recipe){
+            document.getElementById("difficulty").value = recipe.difficulty
+            switch(recipe.category){
+                case "cake": document.getElementById("cake").checked = true
+                    break;
+                case "noodles": document.getElementById("noodles").checked = true
+                    break;
+                case "rice": document.getElementById("rice").checked = true
+                    break;
+                case "meat": document.getElementById("meat").checked = true
+                    break;
+                case "vegetarian": document.getElementById("vegetarian").checked = true
+                    break;
+            }
+            //document.getElementById("preparation").value = recipe.preparation
+
+            let ingredientsSplit = recipe.ingredients.split(",")
+            let ingredient = []
+            let amount = []
+            let tableBody = document.getElementById("tableContent")
+
+            for(let i = 0; i < ingredientsSplit.length; i++){
+                if(i % 2 == 0){
+                    ingredient.push(ingredientsSplit[i])
+                } else {
+                    amount.push(ingredientsSplit[i])
+                }
+            }
+
+            for(let i = 0; i < (ingredientsSplit.length / 2) - 1; i++){
+                addColumn(ingredient[i], amount[i])
+            }
+        }
+
+        function showImage(e){
+            let image = document.getElementById("imageToUpload")
+            image.src = URL.createObjectURL(e.target.files[0])
+        }
+
+        function addColumn(ingredient, amount){
+            var table = document.getElementById("tableContent")
+            var row = document.createElement("tr")
+            var columnName = document.createElement("td")
+            var columnNameInput = document.createElement("input")
+            columnNameInput.setAttribute("name", "tableIngredient"+i)
+            columnNameInput.setAttribute("type", "text")
+            columnNameInput.setAttribute("placeholder", "Zutat")
+            columnName.appendChild(columnNameInput)
+
+            var columnAmount = document.createElement("td")
+            var columnAmountInput = document.createElement("input")
+            columnAmountInput.setAttribute("name", "tableAmount"+i)
+
+            columnAmountInput.setAttribute("type", "text")
+            columnAmountInput.setAttribute("placeholder", "Menge")
+            columnAmount.appendChild(columnAmountInput)
+
+            if(i%2!=0){
+                columnNameInput.setAttribute("class", "tableContentDark")
+                columnAmountInput.setAttribute("class", "tableContentDark")
+            }
+
+            if(ingredient != undefined){
+                columnNameInput.value = ingredient
+            }
+            if(amount != undefined){
+                columnAmountInput.value = amount
+            }
+
+            row.appendChild(columnName)
+            row.appendChild(columnAmount)
+            table.appendChild(row)
+            i++
+        }
+
+        function send(e, form) {
+            e.preventDefault();
+            document.getElementById("ingAmount").value = i
+            fetch("/api/recipes/"+recipeId, {
+                method: "POST",
+                body: new FormData(form),
+            }).then(response => response.json()).then(response => redirect(response));
+        }
+
+        function redirect(response){
+            window.location.href = "/myrecipes/"+username+"/noSort"
+        }
+    </script>
+</body>
+</html>

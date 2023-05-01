@@ -1,0 +1,12 @@
+GET all users           - curl -i -H 'Accept: application/json' http://localhost:8080/api/users
+POST create user        - curl -i -H "Content-Type: application/json" -X POST -d "{\"firstname\" : \"Peter\",\"lastname\" : \"Affe\"}" http://localhost:8080/api/users
+GET user by id          - curl -i -H 'Accept: application/json' http://localhost:8080/api/users/1
+PUT update user by id   - curl -i -H "Content-Type: application/json" -X PUT -d "{\"firstname\" : \"Peter\",\"lastname\" : \"Affe\"}" http://localhost:8080/api/users/5
+DELETE user by id       - curl -i -X DELETE http://localhost:8080/api/users/1
+
+
+GET all recipes              - curl -i -H 'Accept: application/json' http://localhost:8080/api/recipes
+POST create recipe           - curl -i -H "Content-Type: application/json" -X POST -d "{\"name\" : \"Lasagne\",\"description\" : \"Platten\"}" http://localhost:8080/api/recipes
+GET recipe by id             - curl -i -H 'Accept: application/json' http://localhost:8080/api/recipes/1
+PUT update recipe by id      - curl -i -H "Content-Type: application/json" -X PUT -d "{\"name\" : \"Nudeln\",\"description\" : \"Nudeln\"}" http://localhost:8080/api/recipes/1
+DELETE recipe by id          - curl -i -X DELETE http://localhost:8080/api/recipes/1

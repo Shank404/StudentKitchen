@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studentenkueche</title>
+    <link rel="stylesheet" href="/CSS/profile.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <script type="text/javascript" th:src="@{general.js}"></script>
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+                <li><a id="recipes">Rezepte</a></li>
+                <li><a id="favorites">Favoriten</a></li>
+                <li><a id="myrecipes">Meine Rezepte</a></li>
+                <li><a id="newrecipe">Neues Rezept</a></li>
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li class="active"><a id="profile">Mein Profil</a></li>
+            <li><a id="logout">Ausloggen</a></li>
+        </ul>
+    </header>
+    <div class="container">
+        <div class="profile_image">
+            <img id="imageToUpload" th:src="@{'data:image/jpeg;base64,'+${user.image}}">
+        </div>
+        <div class="form_container">
+            <div class="form">
+            <form class="login-form" onsubmit="send(event, this)">
+                <label>Name:</label>
+                <input type="text" name="name" id="name" th:value="${user.name}" placeholder="Name">
+                <label for="username">Benutzername:</label>
+                <input type="text" name="username" id="username" th:value="${user.username}" placeholder="Benutzername" required>
+                <label>Email:</label>
+                <input type="text" name="email" id="email" th:value="${user.email}" placeholder="Email">
+                <label for="password">Passwort:</label>
+                <input type="password" name="password" id="password" th:value="${user.password}" placeholder="Passwort" required>
+                <input type="file" name="images" id="images" onchange="showImage(event)" accept="image/png, image/jpeg">
+                <input type="submit" name="submit" id="submit" value="Speichern">
+                <a href="http://localhost:8080/profile/1">
+                    <input type="button" id="abort" value="Abbrechen">
+                </a>
+            </form>
+            </div>
+            </div>
+    </div>
+
+
+    <script>
+        "use strict";
+        var username = 1
+        document.getElementById("recipes").setAttribute("href", "/recipes/noSort/noCategory")
+        document.getElementById("favorites").setAttribute("href", "/favorites/"+username+"/noSort/noCategory")
+        document.getElementById("myrecipes").setAttribute("href", "/myrecipes/"+username+"/noSort")
+        document.getElementById("newrecipe").setAttribute("href", "/newrecipe")
+        document.getElementById("profile").setAttribute("href", "/profile/"+username)
+        document.getElementById("logout").setAttribute("href", "/logout")
+
+        function send(e, form) {
+            e.preventDefault();
+            fetch("/api/user/"+username, {
+                method: "POST",
+                body: new FormData(form),
+            }).then(response => response.json()).then(response => redirect());
+        }
+
+        function redirect(){
+            window.location.href = "/profile/"+username
+        }
+
+    </script>
+</body>
+
+</html>

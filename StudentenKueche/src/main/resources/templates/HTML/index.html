@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startseite</title>
+    <link rel="stylesheet" href="/CSS/index.css">
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <link rel="stylesheet" href="/CSS/recipe_card.css">
+</head>
+
+<body>
+    <header>
+        <div><Label class="logo" onclick="redirectHome()">Studentenküche</Label></div>
+        <nav>
+            <ul class="navbar">
+            </ul>
+        </nav>
+        <ul class="autho">
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </header>
+        <div class="container">
+            <div class="content">
+                <div class="recipe_container" id="recipe_container" th:each="recipe : ${recipes}">
+                        <div class="recipe" id="recipe">
+                            <img class="images" th:src="@{'data:image/jpeg;base64,'+${recipe.images}}">
+                            <div class="recipe_text">
+                                <h1 th:text="${recipe.name}"></h1>
+                                <p th:text="${recipe.description}"></p>
+                                <div class="recipe_info_container">
+                                    <div class="recipe_info">
+                                        <h3>Preis</h3>
+                                        <p th:text="${recipe.price}"></p>
+                                    </div>
+                                    <div class="recipe_info">
+                                        <h3>Zubereitungszeit</h3>
+                                        <p th:text="${recipe.duration} + ' min'"></p>
+                                    </div>
+                                    <div class="recipe_info">
+                                        <h3>Schwierigkeit</h3>
+                                        <p th:text="${recipe.difficulty}"></p>
+                                    </div>
+                                    <div class="recipe_info">
+                                        <h3>Bewertung</h3>
+                                        <p th:text="${recipe.rating} + '/' + ${recipe.ratingvotes}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
