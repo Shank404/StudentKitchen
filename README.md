@@ -1,4 +1,4 @@
-# Studentkitchen
+# StudentKitchen
 
 This is our humble approach in implementing a Kotlin/SpringBoot-Application.
 It was an assignment in our studys.
